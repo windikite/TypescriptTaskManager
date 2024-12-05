@@ -1,26 +1,37 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { Container } from 'react-bootstrap';
+import TaskManager from './components/Dashboard';
+import Login from './components/LogIn';
+import { PrivateRoute } from './utils/PrivateRoute';
+import { AuthProvider } from './context/AuthProvider';
+import { Auth0Provider } from '@auth0/auth0-react';
+import Callback from './components/Callback';
 
-function App() {
+const App: React.FC = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Auth0Provider
+      domain="dev-mr8lpfwb7850unha.us.auth0.com"
+      clientId="G4dCLwSYFVsTWZpTZdmGaO7Rz25V0EtC"
+      authorizationParams={{
+        redirect_uri: 'http://localhost:3000/callback',
+        scope: 'openid profile email',
+      }}
+    >
+      <AuthProvider>
+        <Router>
+          <Container className="mt-5">
+            <Routes>
+              <Route path="/" element={<PrivateRoute component={TaskManager} />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/callback" element={<Callback />} />
+            </Routes>
+          </Container>
+        </Router>
+      </AuthProvider>
+    </Auth0Provider>
   );
-}
+};
 
 export default App;
+
